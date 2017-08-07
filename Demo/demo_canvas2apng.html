@@ -1,1 +1,291 @@
-test
+<html xmlns="http://www.w3.org/1999/xhtml"  >
+<head  profile="http://www.w3.org/2005/10/profile" >
+  <script src="../canvas2apng.js"></script>
+</head>
+
+<body style="margin: 50px;" >
+
+<h1> DEMO CANVAS TO APNG </h1>
+
+<p> Push buttons <b>"Demo APNG"</b> or <b>"Clock APNG"</b> to generate the animation. </p>
+<p> Canvas hidden. You can make it visible. </p>
+<canvas id="myCanvas" style="display: none;" > </canvas>
+<br/> 
+<p> Resulting animation image. </p>
+<img id="imgAnimPNG" width="300" height="150" border="1" >  
+<br/> <br/>
+<button onclick="startDemo()"> Demo  <br/> APNG  </button>
+<button onclick="startClock()"> Clock <br/> APNG </button>
+
+<br/> <br/>
+
+<a href="" title="Download APNG" 
+   style="text-decoration: none; background-color: #DDD; border: 2px solid #999;
+          height: 60px; margin: 0px; color: #333; padding: 10px 5px 10px 5px; "
+   onclick="downloadAPNG(this)"  > Download APNG 
+</a>
+
+<br/>
+
+<script>
+// ============================================================
+
+// Init page
+var canvas = document.getElementById("myCanvas");  // Animation drawn on this canvas
+// You can make the canvas image visible or hidden (display: none;).
+// The canvas is only used to write frames for the animation.
+// Displaying the canvas is not interesting for the end user.
+canvas.width  = 300;  // do not use canvas.style...
+canvas.height = 150;  // do not use canvas.style...
+var ctx = canvas.getContext('2d');
+ctx.strokeStyle = "black";
+ctx.rect(0,0,canvas.width, canvas.height);
+ctx.stroke();
+
+function startDemo() {
+  // Demo of incremental canvas parts for smaller filesize of APNG animation.
+  // Encoder settings: dispose=0 and blend=1 is important.
+  canvas.width  = 300;  // do not use canvas.style...
+  canvas.height = 150;  // do not use canvas.style...
+
+  window.encoder = new APNGencoder(canvas);
+  encoder.setRepeat(2);    // auto-loop is 0
+  encoder.setDelay(80);    // 1/100 sec
+  encoder.setDispose(0);
+  encoder.setBlend(1);
+
+  encoder.start();
+  frames();  // BUILD CANVAS AND ADD FRAMES
+  encoder.finish();
+
+  var base64Out = bytesToBase64(encoder.stream().bin);         // ANIMATION
+
+  var img = document.getElementById("imgAnimPNG");
+  img.style.width = canvas.width;
+  img.style.height = canvas.height;
+  img.src = "data:image/png;base64," + base64Out;
+ 
+  return 0;
+} // start
+
+function startClock() {
+  // Demo 2: clock APNG animation
+  canvas.width  = 150;  // do not use canvas.style...
+  canvas.height = 150;  // do not use canvas.style...
+
+  window.encoder = new APNGencoder(canvas);
+  encoder.setRepeat(2);    // auto-loop is 0
+  encoder.setDelay(80);   //  1/100 sec
+
+  encoder.start();
+
+  var now = new Date();
+  for(var i = 0; i < 10; i++){
+    //alert("NEXT");
+    now.setSeconds(now.getSeconds() + 10);
+    clock(now);  // BUILD CANVAS AND ADD FRAMES
+  }
+
+  encoder.finish();
+
+  var base64Out = bytesToBase64(encoder.stream().bin);         // ANIMATION
+  var img = document.getElementById("imgAnimPNG");
+  img.style.width = canvas.width;
+  img.style.height = canvas.height;
+  img.src = "data:image/png;base64," + base64Out;
+ 
+  return 0;
+} // startClock
+
+
+function frames() {
+  var ctx = canvas.getContext('2d');
+
+  // Add background canvas
+  var my_gradient = ctx.createLinearGradient(0, 0, 300, 0);
+  my_gradient.addColorStop(0, "#333");
+  my_gradient.addColorStop(1, "white");
+  ctx.fillStyle = my_gradient;      // or some color "rgb(255,255,255)" 
+  ctx.fillRect(0,0,canvas.width, canvas.height);
+  encoder.addFrame(ctx); // ==================
+
+  ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+  // ADD blue rect
+  ctx.fillStyle = "blue";  
+  ctx.fillRect (10, 10, 75, 50);  
+  encoder.addFrame(ctx); // ==================
+
+  ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+  // ADD yellow circle
+  ctx.fillStyle = "yellow";  
+  ctx.strokeStyle = "blue";
+  ctx.beginPath();
+  ctx.arc(140, 60, 50, 0, 2 * Math.PI);
+  ctx.stroke();
+  ctx.fill();
+  ctx.closePath();
+  encoder.addFrame(ctx); // ==================
+
+  ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+  // ADD red rect
+  ctx.fillStyle = "red";  
+  ctx.fillRect (10, 80, 55, 50);  
+  encoder.addFrame(ctx); // ==================
+
+  ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+  // ADD orange rect
+  ctx.fillStyle = "orange";
+  ctx.fillRect (220, 10, 55, 50);  
+  encoder.addFrame(ctx); // ==================
+
+  ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+  // ADD green rect
+  ctx.fillStyle = "green";
+  ctx.fillRect (200, 80, 55, 50);  
+  encoder.addFrame(ctx); // ==================
+
+  ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+  // REMOVE blue rect
+  ctx.save();
+  ctx.beginPath();
+  ctx.rect(10, 10, 75, 50);
+  ctx.closePath();
+  ctx.clip();     // use clip to restore background for this rect !!!!!!!!!!!
+  ctx.fillStyle = my_gradient;  // redraw background with clipping
+  ctx.fillRect(0,0,canvas.width, canvas.height);
+  ctx.restore();  // unclip
+  encoder.addFrame(ctx); // ==================
+
+  return 0;
+} // frames
+
+
+//===========================================================================
+function clock(now){
+  var ctx = canvas.getContext('2d');
+  ctx.save();  // save initial context
+
+  ctx.fillStyle = "white";  // or "rgb(255,255,255)";  
+  ctx.fillRect(0,0, canvas.width, canvas.height); 
+
+  // Global settings
+  ctx.translate(75,75);
+  ctx.scale(0.4,0.4);
+  ctx.rotate(-Math.PI/2);
+  ctx.strokeStyle = "black";
+  ctx.fillStyle = "white";
+  ctx.lineCap = "round";
+
+  // Hour marks
+  ctx.save();
+  ctx.lineWidth = 8;
+  for (var i=0;i<12;i++){
+    ctx.beginPath();
+    ctx.rotate(Math.PI/6);
+    ctx.moveTo(100,0);
+    ctx.lineTo(120,0);
+    ctx.stroke();
+  }
+  ctx.restore();
+
+  // Minute marks
+  ctx.save();
+  ctx.lineWidth = 5;
+  for (i=0;i<60;i++){
+    if (i%5!=0) {
+      ctx.beginPath();
+      ctx.moveTo(117,0);
+      ctx.lineTo(120,0);
+      ctx.stroke();
+    }
+    ctx.rotate(Math.PI/30);
+  }
+  ctx.restore();
+  
+  var sec = now.getSeconds();
+  var min = now.getMinutes();
+  var hr  = now.getHours();
+  hr = hr>=12 ? hr-12 : hr;
+
+  ctx.fillStyle = "black";
+  ctx.strokeStyle = "black";
+
+  // write Hours pointer
+  ctx.save();
+  ctx.rotate( hr*(Math.PI/6) + (Math.PI/360)*min + (Math.PI/21600)*sec )
+  ctx.lineWidth = 14;
+  ctx.beginPath();
+  ctx.moveTo(-20,0);
+  ctx.lineTo(80,0);
+  ctx.stroke();
+  ctx.restore();
+
+  // write Minutes pointer
+  ctx.save();
+  ctx.rotate( (Math.PI/30)*min + (Math.PI/1800)*sec )
+  ctx.lineWidth = 10;
+  ctx.beginPath();
+  ctx.moveTo(-28,0);
+  ctx.lineTo(112,0);
+  ctx.stroke();
+  ctx.restore();
+  
+  // Write Seconds pointer
+  ctx.save();
+  ctx.rotate(sec * Math.PI/30);
+  ctx.strokeStyle = "#D40000";
+  ctx.fillStyle = "#D40000";
+  ctx.lineWidth = 6;
+  ctx.beginPath();
+  ctx.moveTo(-30,0);
+  ctx.lineTo(83,0);
+  ctx.stroke();
+  ctx.beginPath();
+  ctx.arc(0,0,10,0,Math.PI*2,true);
+  ctx.fill();
+  ctx.beginPath();
+  ctx.arc(95,0,10,0,Math.PI*2,true);
+  ctx.stroke();
+  ctx.fillStyle = "#555";
+  ctx.arc(0,0,3,0,Math.PI*2,true);
+  ctx.fill();
+  ctx.restore();
+
+  // Write outer circle
+  ctx.save();
+  ctx.beginPath();
+  ctx.lineWidth = 14;
+  ctx.strokeStyle = "#325FA2";
+  ctx.arc(0,0,142,0,Math.PI*2,true);
+  ctx.stroke();
+  ctx.restore();
+
+  ctx.restore();  // restore initial context
+  encoder.addFrame(ctx);   // ==================
+  return 0;
+}  // clock
+//===========================================================================
+
+
+function downloadAPNG(iLink) {
+   if (typeof encoder === 'undefined' || encoder.stream() == null || encoder.closeStream==false) {
+     alert("Please call start method and add frames and call finish method before calling download"); 
+     return 0;
+   }
+   var out = encoder.stream();
+   var href= URL.createObjectURL(new Blob([new Uint8Array(out.bin)], {type : "image/png" } ));
+   iLink.href = href;
+   iLink.download = "animation.png";   // filename
+   return 0;
+}  // downloadAPNG
+
+</script>
+
+</body>
+</html>
