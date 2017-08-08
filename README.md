@@ -71,6 +71,8 @@ Some useful methods facilitates debugging and converting the ByteArray object.
 * toStrBase64()
 * toStrAscii()
 * toStrDec()
+
+And some useful functions: 
 * decimalToHex()
 * bytesToBase64()
 * base64ToBytes()
