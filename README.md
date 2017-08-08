@@ -51,6 +51,8 @@ If these images are not animating, the animation is stopped (after 7 times) or y
     **encoder.setDispose(0);**
   * Set blend attribute (values 0,1). See APNG specs.  <br/>
     **encoder.setBlend(1);** 
+
+* Processing commands.
   * Set encoder in start modus. Ready for adding frames to the animation.  <br/>
     **encoder.start();**
   * Add frames to the animation.  <br/>
