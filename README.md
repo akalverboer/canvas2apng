@@ -66,7 +66,7 @@ If these images are not animating, the animation is stopped (after 7 times) or y
 # ByteArray
 To facilitate processing, a special object ByteArray is defined. The animation is stored in an instance of ByteArray, part of the application. It hold an array of unsigned integers with some specific methods to process PNG data. <br/>
 The resulting ByteArray can be asked by **encoder.stream()** and the array by **encoder.stream().bin**  <br/>
-Some useful methods facilitates debugging and converting the ByteArray object.
+Some useful methods facilitates debugging and converting the instance of a ByteArray object.
 * bin
 * toStrHex()
 * toStrBase64()
