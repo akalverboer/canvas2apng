@@ -32,7 +32,7 @@ If these images are not animating, the animation is stopped (after 7 times) or y
       * For each change of the canvas add a frame to the animation: **encoder.addFrame();**  
       * Stop encoder, animation ready: **encoder.finish();** 
 
-5. While writing your canvas changes you specify moments to write the canvas data to the encoder with the addFrame() function. Each time you add a frame to the encoder, the canvas image will be added to the animation.
+5. While writing your canvas changes, you specify moments to write the canvas data to the encoder with the addFrame() function. Each time you add a frame to the encoder, the canvas image will be added to the animation.
 
 6. After finishing the encoder you can save the animation data to an image element.  <br/>
    Or you can download the animation as a local file (extension .png).  <br/>
