@@ -61,8 +61,7 @@ If these images are not animating, the animation is stopped (after 7 times) or y
     **encoder.finish();**
   * Get the result of the animation. The result is an array of unsigned integers representing a APNG animation. <br/>
     With **encoder.stream()** you get an instance of the ByteArray object with some useful methods. <br/>
-    The **.bin** attribute gives the array of the animation.  <br/>
-    **encoder.stream().bin** 
+    The **encoder.stream().bin** command gives the array of the animation. 
 
 # ByteArray
 To facilitate processing, a special object ByteArray is defined. The animation is stored in an instance of ByteArray, part of the application. It hold an array of unsigned integers with some specific methods to process PNG data. <br/>
