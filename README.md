@@ -19,10 +19,10 @@ If these images are not animating, the animation is stopped (after 7 times) or y
 1. First you need to include the JS file in your html: <br/>
       *<script type="text/javascript" src="canvas2apng.js">  </script>*
 
-2. To create an APNG animation you need a canvas element in your html: <br/>
-      *<canvas id="myCanvas" >  </canvas>*
+2. To create an APNG animation you need a canvas element in your html: <br/> 
+   *\<canvas id="myCanvas" \>  \</canvas\>*   <br/> 
    In your script define: <br/>
-      *var canvas = document.getElementById("myCanvas");*
+   *var canvas = document.getElementById("myCanvas");*
 
 3. Create an encoder object in your script (often a global var is useful): <br/>
       *window.encoder = new APNGencoder(canvas);*
@@ -32,9 +32,7 @@ If these images are not animating, the animation is stopped (after 7 times) or y
       * For each change of the canvas add a frame to the animation: **encoder.addFrame();**  
       * Stop encoder, animation ready: **encoder.finish();** 
 
-5. While writing your canvas changes you specify moments to write the canvas data to the encoder 
-   with the addFrame() function.  <br/>
-   Each time you add a frame to the encoder, the canvas image will be added to the animation.
+5. While writing your canvas changes you specify moments to write the canvas data to the encoder with the addFrame() function. Each time you add a frame to the encoder, the canvas image will be added to the animation.
 
 6. After finishing the encoder you can save the animation data to an image element.  <br/>
    Or you can download the animation as a local file (extension .png).  <br/>
@@ -86,4 +84,3 @@ You can also download (save) the animation as local PNG file by using a link ele
 download attribute. See the function **downloadAPNG(iLink)** in the demo application.
 
 
-TO DO
