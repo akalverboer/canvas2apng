@@ -82,7 +82,7 @@ To display the animation at your page use an image element and define the ".src"
   * **var base64Out = bytesToBase64(encoder.stream().bin);**
   * **img.src = "data:image/png;base64," + base64Out;**   <br/>
 
-You can also download (save) the animation as local PNG file by using a link element (<a>) with
+You can also download (save) the animation as local PNG file by using a link element (\<a\>) with
 download attribute. See the function **downloadAPNG(iLink)** in the demo application.
 
 
