@@ -86,4 +86,5 @@ To display the animation at your page use an image element and define the ".src"
 You can also download (save) the animation as local PNG file by using a link element (\<a\>) with
 download attribute. See the function **downloadAPNG(iLink)** in the demo application.
 
-
+# CRC32 Calculation
+A function is taken from the internet to calculate CRC32 values (see code).
