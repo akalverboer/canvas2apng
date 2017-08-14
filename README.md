@@ -10,7 +10,7 @@ For more info about APNG see: https://en.wikipedia.org/wiki/APNG
 **06 aug 2017**: <br/>
 First publish of my CANVAS to APNG encoder to generate animations of a changing Html5 canvas element. <br/> <br/>
 **13 aug 2017**: <br/>
-I have found a bug. The bug occurs when the canvas image is too complex. Then more than one so called IDAT and fdAT chunks are present. This causes an error while reading the APNG file. I hope I will soon have a solution for it. <br/>
+I have found a bug. The bug occurs when the canvas image is too complex. Then more than one so called IDAT and fdAT chunks are present. This causes an error while reading the APNG file. I hope I will soon have a solution for it. <br/> <br/>
 **14 aug 2017**: <br/>
 Solution implemented for the bug of yesterday.
 
