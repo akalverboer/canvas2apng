@@ -34,6 +34,7 @@ function APNGencoder(iCanvas) {
     this.canvas = iCanvas;  // Canvas element
 	this.repeat = 0;      // number of repeats; 0 indefinitely
 	this.frame = -1;      // frame number (0 is first frame)
+    this.seqNumber = -1;  // Sequence number for fcTL and fdAT chunks
     this.delay_num = 1;   // Frame delay fraction numerator   (int16, 2 bytes)
     this.delay_den = 1;   // Frame delay fraction denominator (int16, 2 bytes) 0 == 1/100 sec
     this.dispose = 0;     // Type of frame area disposal; values 0, 1, 2
@@ -53,6 +54,7 @@ function APNGencoder(iCanvas) {
 		this.apngBytes = new ByteArray(0);
         this.frameBytes = new ByteArray(0);
         this.frame = -1;
+        this.seqNumber = -1;
 
 		return 0;
 	}   // start
@@ -120,7 +122,6 @@ function APNGencoder(iCanvas) {
            var chunkSlice = this.frameBytes.bin.slice(chunk.idx, chunk.idx + 12 + chunk.len);
            this.apngBytes.bin = this.apngBytes.bin.concat(chunkSlice);
 
-
            // acTL chunk   (animation control)
            var acTL = new Array(0);
            acTL = acTL.concat([0,0,0,8]);  // fixed length (8 data bytes)
@@ -134,24 +135,26 @@ function APNGencoder(iCanvas) {
            // Add (copy) Data Chunks (fcTL and IDAT)  (first frame)
            var chunkArray = this.frameBytes.findChunkAll("IDAT");
            for (var i = 0; i < chunkArray.length; i++) { 
+              if (i == 0) {
+                 // fcTL chunk (frame control)
+                 this.seqNumber +=1;  // Sequence number for fcTL and fdAT chunks
+                 var fcTL = new Array(0);
+                 fcTL = fcTL.concat( int32ToBytes4(26) );  // fixed length data 8 bytes
+                 fcTL = fcTL.concat( str4ToBytes4("fcTL") );  // chunk type;
+                 fcTL = fcTL.concat( int32ToBytes4(this.seqNumber) );     // sequence number 0
+                 fcTL = fcTL.concat( int32ToBytes4(this.canvas.width) );  // width
+                 fcTL = fcTL.concat( int32ToBytes4(this.canvas.height) ); // height
+                 fcTL = fcTL.concat( int32ToBytes4(0) );                  // x-offset
+                 fcTL = fcTL.concat( int32ToBytes4(0) );                  // y-offset
+                 fcTL = fcTL.concat( int16ToBytes2(this.delay_num) );     // Delay num
+                 fcTL = fcTL.concat( int16ToBytes2(this.delay_den) );     // Delay den
+                 fcTL = fcTL.concat( [this.dispose] );  // dispose mode; values [0,1,2] (1 byte)
+                 fcTL = fcTL.concat( [this.blend] );    // blend mode values [0,1] (1 byte)
 
-              // fcTL chunk (frame control)
-              var fcTL = new Array(0);
-              fcTL = fcTL.concat( int32ToBytes4(26) );  // fixed length data 8 bytes
-              fcTL = fcTL.concat( str4ToBytes4("fcTL") );  // chunk type;
-              fcTL = fcTL.concat( int32ToBytes4(this.frame) );  // sequence number 0
-              fcTL = fcTL.concat( int32ToBytes4(this.canvas.width) );  // width
-              fcTL = fcTL.concat( int32ToBytes4(this.canvas.height) ); // height
-              fcTL = fcTL.concat( int32ToBytes4(0) );                  // x-offset
-              fcTL = fcTL.concat( int32ToBytes4(0) );                  // y-offset
-              fcTL = fcTL.concat( int16ToBytes2(this.delay_num) );     // Delay num
-              fcTL = fcTL.concat( int16ToBytes2(this.delay_den) );     // Delay den
-              fcTL = fcTL.concat( [this.dispose] );  // dispose mode; values [0,1,2] (1 byte)
-              fcTL = fcTL.concat( [this.blend] );    // blend mode values [0,1] (1 byte)
-
-              var crcVal = crc32b(fcTL.slice(4, 4+4+26));
-              fcTL = fcTL.concat( int32ToBytes4(crcVal) );           // push CRC 4 bytes
-              this.apngBytes.bin = this.apngBytes.bin.concat(fcTL);  // push to main stream
+                 var crcVal = crc32b(fcTL.slice(4, 4+4+26));
+                 fcTL = fcTL.concat( int32ToBytes4(crcVal) );           // push CRC 4 bytes
+                 this.apngBytes.bin = this.apngBytes.bin.concat(fcTL);  // push to main stream
+              }
 
               chunk = chunkArray[i];  // copy complete IDAT chunk
               var chunkSlice = this.frameBytes.bin.slice(chunk.idx, chunk.idx + 12 + chunk.len);
@@ -165,41 +168,44 @@ function APNGencoder(iCanvas) {
            // Add Data Chunks fcTL/fdAT
            var chunkArray = this.frameBytes.findChunkAll("IDAT");
            for (var i = 0; i < chunkArray.length; i++) { 
+              if (i == 0) {
+                 // fcTL chunk (frame control)
+                 this.seqNumber +=1;  // Sequence number for fcTL and fdAT chunks
+                 var fcTL = new Array(0);
+                 fcTL = fcTL.concat( int32ToBytes4(26) );          // fixed length data 8 bytes
+                 fcTL = fcTL.concat( str4ToBytes4("fcTL") );       // chunk type;
+                 fcTL = fcTL.concat( int32ToBytes4(this.seqNumber) );      // sequence number
+                 fcTL = fcTL.concat( int32ToBytes4(this.canvas.width) );   // width
+                 fcTL = fcTL.concat( int32ToBytes4(this.canvas.height) );  // height
+                 fcTL = fcTL.concat( int32ToBytes4(0) );                   // x-offset
+                 fcTL = fcTL.concat( int32ToBytes4(0) );                   // y-offset
+                 fcTL = fcTL.concat( int16ToBytes2(this.delay_num) );      // Delay num
+                 fcTL = fcTL.concat( int16ToBytes2(this.delay_den) );      // Delay den
+                 fcTL = fcTL.concat( [this.dispose] );  // dispose mode; values [0,1,2] (1 byte)
+                 fcTL = fcTL.concat( [this.blend] );    // blend mode values [0,1] (1 byte)
 
-              // fcTL chunk (frame control)
-              var fcTL = new Array(0);
-              fcTL = fcTL.concat( int32ToBytes4(26) );          // fixed length data 8 bytes
-              fcTL = fcTL.concat( str4ToBytes4("fcTL") );       // chunk type;
-              fcTL = fcTL.concat( int32ToBytes4(this.frame * 2 - 1) );  // sequence number
-              fcTL = fcTL.concat( int32ToBytes4(this.canvas.width) );   // width
-              fcTL = fcTL.concat( int32ToBytes4(this.canvas.height) );  // height
-              fcTL = fcTL.concat( int32ToBytes4(0) );                   // x-offset
-              fcTL = fcTL.concat( int32ToBytes4(0) );                   // y-offset
-              fcTL = fcTL.concat( int16ToBytes2(this.delay_num) );      // Delay num
-              fcTL = fcTL.concat( int16ToBytes2(this.delay_den) );      // Delay den
-              fcTL = fcTL.concat( [this.dispose] );  // dispose mode; values [0,1,2] (1 byte)
-              fcTL = fcTL.concat( [this.blend] );    // blend mode values [0,1] (1 byte)
+                 var crcVal = crc32b(fcTL.slice(4, 4+4+26));
+                 fcTL = fcTL.concat( int32ToBytes4(crcVal) );  // push CRC 4 bytes
+                 this.apngBytes.bin = this.apngBytes.bin.concat(fcTL);  // push to main stream
+              }
 
-              var crcVal = crc32b(fcTL.slice(4, 4+4+26));
-              fcTL = fcTL.concat( int32ToBytes4(crcVal) );  // push CRC 4 bytes
-              this.apngBytes.bin = this.apngBytes.bin.concat(fcTL);  // push to main stream
               // ============================================================================
               // fdAT chunk (frame data)
               chunk = chunkArray[i];  // get IDAT chunk object
               var chunk_IDAT_data = this.frameBytes.bin.slice(chunk.idx + 8, chunk.idx + 8 + chunk.len);
               var len_fdAT = chunk.len + 4;                  // increase data with seq number
 
+              this.seqNumber +=1;  // Sequence number for fcTL and fdAT chunks
               var fdAT = new Array(0);
               fdAT = fdAT.concat( int32ToBytes4(len_fdAT) );    // append length bytes
               fdAT = fdAT.concat( str4ToBytes4("fdAT") );       // chunk type bytes
-              fdAT = fdAT.concat( int32ToBytes4(this.frame * 2) );  // add sequence number bytes
+              fdAT = fdAT.concat( int32ToBytes4(this.seqNumber) );  // add sequence number bytes
               fdAT = fdAT.concat( chunk_IDAT_data );            // append original IDAT data
               var crcVal = crc32b(fdAT.slice(4, 4+4+len_fdAT));
               fdAT = fdAT.concat( int32ToBytes4(crcVal) );      // push CRC 4 bytes
 
               this.apngBytes.bin = this.apngBytes.bin.concat(fdAT);  // push to main stream
            }  // for
-
 
         }  // not first frame
 
@@ -537,6 +543,3 @@ function formatCRC32(iVal, iType) {
 }  // formatCRC32
 
 // ===============================================================================
-
-
-
