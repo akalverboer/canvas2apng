@@ -32,8 +32,8 @@ function APNGencoder(iCanvas) {
     // and replace this and self by state.
     var self = this;  // !!! copy this to context of object
     this.canvas = iCanvas;  // Canvas element
-	this.repeat = 0;      // number of repeats; 0 indefinitely
-	this.frame = -1;      // frame number (0 is first frame)
+    this.repeat = 0;      // number of repeats; 0 indefinitely
+    this.frame = -1;      // frame number (0 is first frame)
     this.seqNumber = -1;  // Sequence number for fcTL and fdAT chunks
     this.delay_num = 1;   // Frame delay fraction numerator   (int16, 2 bytes)
     this.delay_den = 1;   // Frame delay fraction denominator (int16, 2 bytes) 0 == 1/100 sec
@@ -48,16 +48,15 @@ function APNGencoder(iCanvas) {
 	this.closeStream = false; // close stream when finished
 
 	this.start = function() {
-        // Creates APNG output stream on which images are written.
-		this.started = true;
-		this.closeStream = false;
-		this.apngBytes = new ByteArray(0);
-        this.frameBytes = new ByteArray(0);
-        this.frame = -1;
-        this.seqNumber = -1;
-
-		return 0;
-	}   // start
+           // Creates APNG output stream on which images are written.
+           this.started = true;
+           this.closeStream = false;
+           this.apngBytes = new ByteArray(0);
+           this.frameBytes = new ByteArray(0);
+           this.frame = -1;
+           this.seqNumber = -1;
+           return 0;
+        }   // start
 
 	this.setDelay = function(d100) {
         // Sets the delay time between each frame.
