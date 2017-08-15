@@ -31,6 +31,7 @@ function APNGencoder(iCanvas) {
     // To hide this-variables, put them in an object (e.g. variable state)
     // and replace this and self by state.
     var self = this;  // !!! copy this to context of object
+    this.whoami = "apng png animation encoder canvas";  // keywords to identify
     this.canvas = iCanvas;  // Canvas element
     this.repeat = 0;      // number of repeats; 0 indefinitely
     this.frame = -1;      // frame number (0 is first frame)
