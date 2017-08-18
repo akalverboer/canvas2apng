@@ -12,7 +12,7 @@ First publish of my CANVAS to APNG encoder to generate animations of a changing 
 **13 aug 2017**: <br/>
 I have found a bug. The bug occurs when the canvas image is too complex. Then more than one so called IDAT and fdAT chunks are present. This causes an error while reading the APNG file. I hope I will soon have a solution for it. <br/> <br/>
 **14 aug 2017**: <br/>
-Solution implemented for the bug of yesterday.
+Solution implemented for the bug of yesterday. <br/> <br/>
 **18 aug 2017**: <br/>
 An application has been realised in my [Chess Diagram Maker](http://svg_experimenten.deds.nl/chessboard/chess_diagram_maker.html) where online an animation of chess can be created (GIF or PNG). 
 A similar application is realised in my [Draughts Diagram maker](http://svg_experimenten.deds.nl/draughtboard/draughts_diagram_maker.html).
