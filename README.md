@@ -23,7 +23,8 @@ I have found a bug. The bug occurs when the canvas image is too complex. Then mo
 Solution implemented for the bug of yesterday. <br/> <br/>
 **18 aug 2017**: <br/>
 An application has been realised in my [Chess Diagram Maker](http://svg_experimenten.deds.nl/chessboard/chess_diagram_maker.html) where online an animation of chess can be created (GIF or PNG). 
-A similar application is realised in my [Draughts Diagram maker](http://svg_experimenten.deds.nl/draughtboard/draughts_diagram_maker.html).
+A similar application is realised in my [Draughts Diagram maker](http://svg_experimenten.deds.nl/draughtboard/draughts_diagram_maker.html). <br/>
+![Example of a chess animation.](Demo/chess_scholars_mate3.png)
 
 # Basic Usage
 
